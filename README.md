@@ -11,21 +11,21 @@ It exposes a schema-first, config-driven API layer that brokers between canonica
 
 ```mermaid
 flowchart LR
-  Client[Agent / Voice Platform] -->|HTTP POST /tools/*| AP[Actions Platform (Fastify)]
+  Client[Agent / Voice Platform] -->|"HTTP POST /tools/*"| AP[Actions Platform - Fastify]
   subgraph Config
-    M[Manifest\nconfig/manifest/mcp.json]
-    T[Tenants\nconfig/tenants/*.json]
-    V[Vendor mappings\nconfig/connectors/vendors/*.json]
-    O[OAuth providers\nconfig/oauth/providers/*.json]
+    M["Manifest<br/>config/manifest/mcp.json"]
+    T["Tenants<br/>config/tenants/*.json"]
+    V["Vendor mappings<br/>config/connectors/vendors/*.json"]
+    O["OAuth providers<br/>config/oauth/providers/*.json"]
   end
-  Config -->|load & watch| CL[Config Loader]
+  Config -->|"load & watch"| CL[Config Loader]
   CL --> AP
   AP --> TR[Tool Router]
   TR --> HCRM[CRM Handlers]
-  HCRM -->|future| SF[Salesforce]
-  HCRM -->|future| ZD[Zendesk]
-  AP -->|docs| Swagger[Swagger UI / OpenAPI]
-  AP -->|optional| Redis[(Redis: cache + idempotency)]
+  HCRM -.->|"future"| SF[Salesforce]
+  HCRM -.->|"future"| ZD[Zendesk]
+  AP -->|"docs"| Swagger[Swagger UI / OpenAPI]
+  AP -->|"optional"| Redis[("Redis: cache + idempotency")]
 ```
 
 ### Highlights
