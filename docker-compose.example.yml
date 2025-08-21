@@ -1,0 +1,54 @@
+# Ecco Backline - Reference Docker Compose
+# Demonstrates local development setup with Redis
+
+version: '3.8'
+
+services:
+  actions-platform:
+    build: 
+      context: .
+      dockerfile: Dockerfile.example
+    ports:
+      - "3030:3030"
+    environment:
+      - PORT=3030
+      - LOG_LEVEL=info
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    volumes:
+      # Mount config for hot-reloading in development
+      - ./config:/app/config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Future: Database for persistence
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     - POSTGRES_DB=ecco_backline
+  #     - POSTGRES_USER=actions
+  #     - POSTGRES_PASSWORD=dev_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+volumes:
+  redis_data:
+  # postgres_data:
