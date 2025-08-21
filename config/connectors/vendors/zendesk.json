@@ -1,0 +1,38 @@
+{
+  "provider": "zendesk",
+  "mappings": {
+    "Customer": {
+      "id": "user.id",
+      "primary_contact.name": "user.name",
+      "identifiers.email": "user.email",
+      "identifiers.phone": "user.phone",
+      "attributes": {
+        "locale": "user.locale",
+        "time_zone": "user.time_zone"
+      }
+    },
+    "Case": {
+      "id": "ticket.id",
+      "subject": "ticket.subject",
+      "status": "ticket.status",
+      "priority": "ticket.priority",
+      "customer_id": "ticket.requester_id",
+      "assigned_queue": "ticket.group_id",
+      "tags": "ticket.tags",
+      "custom_fields": {
+        "priority_bucket": "ticket.fields.12345"
+      }
+    },
+    "Note": {
+      "id": "comment.id",
+      "case_id": "ticket.id",
+      "body": "comment.body",
+      "visibility": "comment.public ? 'external' : 'internal'",
+      "author": "system"
+    }
+  },
+  "features": {
+    "search_knowledge": true
+  }
+}
+

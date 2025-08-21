@@ -1,0 +1,38 @@
+{
+  "provider": "salesforce",
+  "mappings": {
+    "Customer": {
+      "id": "Account.Id",
+      "primary_contact.name": "Account.Name",
+      "identifiers.email": "Contact.Email",
+      "identifiers.phone": "Contact.Phone",
+      "attributes": {
+        "industry": "Account.Industry",
+        "website": "Account.Website"
+      }
+    },
+    "Case": {
+      "id": "Case.Id",
+      "subject": "Case.Subject",
+      "status": "Case.Status",
+      "priority": "Case.Priority",
+      "customer_id": "Case.AccountId",
+      "assigned_queue": "Case.OwnerId",
+      "tags": "Case.Tags__c",
+      "custom_fields": {
+        "priority_bucket": "Case.Priority_Bucket__c"
+      }
+    },
+    "Note": {
+      "id": "ContentNote.Id",
+      "case_id": "Case.Id",
+      "body": "ContentNote.Content",
+      "visibility": "internal",
+      "author": "system"
+    }
+  },
+  "features": {
+    "search_knowledge": false
+  }
+}
+

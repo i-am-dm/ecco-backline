@@ -1,0 +1,81 @@
+{
+  "tenant_id": "demo",
+  "name": "Demo Tenant",
+  "tools": {
+    "enabled": [
+      "crm.lookup_customer",
+      "crm.list_cases",
+      "crm.create_case",
+      "crm.add_note",
+      "meta.health"
+    ],
+    "scopes": {
+      "crm.lookup_customer": ["customer:read"],
+      "crm.list_cases": ["case:read"],
+      "crm.create_case": ["case:write"],
+      "crm.add_note": ["note:write"],
+      "meta.health": []
+    }
+  },
+  "connectors": [
+    {
+      "key": "crm_sf",
+      "provider": "salesforce",
+      "capabilities": ["crm.lookup_customer", "crm.list_cases", "crm.create_case", "crm.add_note"],
+      "instance": {
+        "base_url": "https://mydomain.my.salesforce.com"
+      },
+      "auth": {
+        "provider": "salesforce",
+        "grant": "jwt_bearer",
+        "client_id": "secret_ref:salesforce.demo.client_id",
+        "user": "conf_ref:salesforce.demo.user",
+        "jwt_private_key_pem": "secret_ref:salesforce.demo.private_key",
+        "login_host": "https://login.salesforce.com"
+      },
+      "timeouts": { "connect_ms": 200, "read_ms": 700, "total_ms": 900 },
+      "circuit_breaker": { "failure_threshold": 5, "reset_ms": 10000 },
+      "rate_limiter": { "rps": 10, "burst": 20 },
+      "mapping": "config/connectors/vendors/salesforce.json"
+    },
+    {
+      "key": "crm_zd",
+      "provider": "zendesk",
+      "capabilities": ["crm.lookup_customer", "crm.list_cases", "crm.create_case", "crm.add_note"],
+      "instance": {
+        "base_url": "https://your-subdomain.zendesk.com"
+      },
+      "auth": {
+        "provider": "zendesk",
+        "grant": "authorization_code_pkce",
+        "client_id": "secret_ref:zendesk.demo.client_id",
+        "client_secret": "secret_ref:zendesk.demo.client_secret",
+        "refresh_token": "secret_ref:zendesk.demo.refresh_token"
+      },
+      "timeouts": { "connect_ms": 200, "read_ms": 700, "total_ms": 900 },
+      "circuit_breaker": { "failure_threshold": 5, "reset_ms": 10000 },
+      "rate_limiter": { "rps": 10, "burst": 20 },
+      "mapping": "config/connectors/vendors/zendesk.json"
+    }
+  ],
+  "cache": {
+    "customer_lookup_ttl_ms": 30000,
+    "case_list_ttl_ms": 15000,
+    "stale_while_revalidate_ms": 120000
+  },
+  "policy": "config/policies/demo.json",
+  "audit": {
+    "enabled": true,
+    "sink": { "type": "s3", "bucket": "actions-audit-demo", "prefix": "tenant=demo/" },
+    "redaction": { "mask_pan": true, "mask_email": true, "mask_phone": true }
+  },
+  "observability": {
+    "tracing": { "otlp_endpoint": "env:OTLP_ENDPOINT" },
+    "metrics": { "push_interval_ms": 10000 }
+  },
+  "idempotency": {
+    "retention_days": 7,
+    "scope": ["crm.create_case", "crm.add_note", "crm.update_case", "crm.escalate_case"]
+  }
+}
+

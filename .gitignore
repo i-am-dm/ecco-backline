@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.DS_Store
+.env
+npm-debug.log*
+yarn-error.log*
+coverage/
+.turbo/
+apps/**/dist/
+packages/**/dist/
+connectors/**/dist/
+

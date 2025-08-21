@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actions.platform/schemas/config/tenant.schema.json",
+  "title": "Tenant Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "tenant_id": { "type": "string" },
+    "name": { "type": "string" },
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "array", "items": { "type": "string" } },
+        "scopes": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+      },
+      "required": ["enabled"]
+    },
+    "connectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "key": { "type": "string" },
+          "provider": { "type": "string" },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "instance": { "type": "object", "additionalProperties": true },
+          "auth": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "provider": { "type": "string" },
+              "grant": { "type": "string" },
+              "client_id": { "type": "string" },
+              "client_secret": { "type": "string" },
+              "refresh_token": { "type": "string" },
+              "jwt_private_key_pem": { "type": "string" },
+              "user": { "type": "string" },
+              "login_host": { "type": "string" }
+            }
+          },
+          "timeouts": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "connect_ms": { "type": "integer" },
+              "read_ms": { "type": "integer" },
+              "total_ms": { "type": "integer" }
+            }
+          },
+          "circuit_breaker": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "failure_threshold": { "type": "integer" },
+              "reset_ms": { "type": "integer" }
+            }
+          },
+          "rate_limiter": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "rps": { "type": "integer" },
+              "burst": { "type": "integer" }
+            }
+          },
+          "mapping": { "type": "string" }
+        },
+        "required": ["key", "provider", "capabilities", "auth"]
+      }
+    },
+    "cache": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "customer_lookup_ttl_ms": { "type": "integer" },
+        "case_list_ttl_ms": { "type": "integer" },
+        "stale_while_revalidate_ms": { "type": "integer" }
+      }
+    },
+    "policy": { "type": "string" },
+    "audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "sink": { "type": "object", "additionalProperties": true },
+        "redaction": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "observability": { "type": "object", "additionalProperties": true },
+    "idempotency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "retention_days": { "type": "integer" },
+        "scope": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "required": ["tenant_id", "tools", "connectors"]
+}
+

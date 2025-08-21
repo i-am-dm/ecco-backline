@@ -1,0 +1,173 @@
+{
+  "version": "1.0.0",
+  "canonical_schema_ref": "../../packages/canonical-model/v1/schema.json",
+  "tools": [
+    {
+      "name": "crm.lookup_customer",
+      "description": "Find a customer by phone/email/customer_number and return a canonical profile.",
+      "input_schema": {
+        "type": "object",
+        "required": ["query"],
+        "additionalProperties": false,
+        "properties": {
+          "query": { "type": "string", "description": "phone or email or customer number" },
+          "include": { "type": "array", "items": { "enum": ["cases", "entitlements", "orders"] } }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "match_quality": { "type": "string", "enum": ["exact", "strong", "fuzzy", "none"] },
+          "customer": { "$ref": "https://actions.platform/schemas/canonical/v1.json#/$defs/Customer" }
+        }
+      },
+      "side_effects": "read",
+      "scopes_required": ["customer:read"]
+    },
+    {
+      "name": "crm.update_case",
+      "description": "Update fields on an existing case.",
+      "input_schema": {
+        "type": "object",
+        "required": ["id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "subject": { "type": "string" },
+          "status": { "type": "string", "enum": ["new", "open", "pending", "solved", "closed"] },
+          "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"] },
+          "assigned_queue": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "custom_fields": { "type": "object", "additionalProperties": true },
+          "idempotency_key": { "type": "string" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "case": { "$ref": "https://actions.platform/schemas/canonical/v1.json#/$defs/Case" }
+        }
+      },
+      "side_effects": "write",
+      "scopes_required": ["case:write"]
+    },
+    {
+      "name": "crm.escalate_case",
+      "description": "Escalate a case to a queue.",
+      "input_schema": {
+        "type": "object",
+        "required": ["id", "queue"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "queue": { "type": "string" },
+          "note": { "type": "string" },
+          "idempotency_key": { "type": "string" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "case": { "$ref": "https://actions.platform/schemas/canonical/v1.json#/$defs/Case" }
+        }
+      },
+      "side_effects": "write",
+      "scopes_required": ["case:write"]
+    },
+    {
+      "name": "crm.list_cases",
+      "description": "List cases for a customer.",
+      "input_schema": {
+        "type": "object",
+        "required": ["customer_id"],
+        "additionalProperties": false,
+        "properties": {
+          "customer_id": { "type": "string" },
+          "status": { "type": "string", "enum": ["new", "open", "pending", "solved", "closed"] },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "cursor": { "type": "string" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "cases": { "type": "array", "items": { "$ref": "https://actions.platform/schemas/canonical/v1.json#/$defs/Case" } },
+          "next_cursor": { "type": ["string", "null"] }
+        }
+      },
+      "side_effects": "read",
+      "scopes_required": ["case:read"]
+    },
+    {
+      "name": "crm.create_case",
+      "description": "Create a new case/ticket for a customer.",
+      "input_schema": {
+        "type": "object",
+        "required": ["customer_id", "subject"],
+        "additionalProperties": false,
+        "properties": {
+          "customer_id": { "type": "string" },
+          "subject": { "type": "string" },
+          "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"] },
+          "initial_note": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "idempotency_key": { "type": "string" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "case": { "$ref": "https://actions.platform/schemas/canonical/v1.json#/$defs/Case" }
+        }
+      },
+      "side_effects": "write",
+      "scopes_required": ["case:write"]
+    },
+    {
+      "name": "crm.add_note",
+      "description": "Add a note/comment to a case.",
+      "input_schema": {
+        "type": "object",
+        "required": ["case_id", "body"],
+        "additionalProperties": false,
+        "properties": {
+          "case_id": { "type": "string" },
+          "body": { "type": "string" },
+          "visibility": { "type": "string", "enum": ["internal", "external"] },
+          "author": { "type": "string", "enum": ["system", "agent", "bot"] },
+          "idempotency_key": { "type": "string" }
+        }
+      },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "note": { "$ref": "https://actions.platform/schemas/canonical/v1.json#/$defs/Note" }
+        }
+      },
+      "side_effects": "write",
+      "scopes_required": ["note:write"]
+    },
+    {
+      "name": "meta.health",
+      "description": "Readiness/health check for MCP client.",
+      "input_schema": { "type": "object", "additionalProperties": false, "properties": {} },
+      "output_schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": { "type": "string", "enum": ["ok"] },
+          "uptime_ms": { "type": "number" }
+        }
+      },
+      "side_effects": "read",
+      "scopes_required": []
+    }
+  ]
+}
+

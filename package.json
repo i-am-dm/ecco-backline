@@ -1,0 +1,21 @@
+{
+  "name": "ecco-backline",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Actions Platform - MCP Server and integration layer",
+  "engines": {
+    "node": ">=20.10.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "connectors/*"
+  ],
+  "scripts": {
+    "dev": "npm run -w @actions-platform/actions-platform dev",
+    "build": "npm run -ws build",
+    "typecheck": "npm run -ws typecheck",
+    "clean": "rimraf \"**/dist\""
+  }
+}
+

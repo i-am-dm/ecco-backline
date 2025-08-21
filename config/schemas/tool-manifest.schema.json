@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actions.platform/schemas/config/tool-manifest.schema.json",
+  "title": "MCP Tool Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "canonical_schema_ref": { "type": "string" },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "input_schema": { "type": "object" },
+          "output_schema": { "type": "object" },
+          "side_effects": { "type": "string", "enum": ["read", "write"] },
+          "scopes_required": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["name", "input_schema", "output_schema"]
+      }
+    }
+  },
+  "required": ["version", "canonical_schema_ref", "tools"]
+}
+

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actions.platform/schemas/canonical/v1.json",
+  "title": "Canonical Model v1",
+  "type": "object",
+  "$defs": {
+    "ExternalId": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "system": { "type": "string" },
+        "id": { "type": "string" }
+      },
+      "required": ["system", "id"]
+    },
+    "IdentifierSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "phone": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "customer_number": { "type": "string" },
+        "loyalty_id": { "type": "string" }
+      }
+    },
+    "Contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "phones": { "type": "array", "items": { "type": "string" } },
+        "emails": { "type": "array", "items": { "type": "string", "format": "email" } }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "line1": { "type": "string" },
+        "line2": { "type": "string" },
+        "city": { "type": "string" },
+        "region": { "type": "string" },
+        "postal_code": { "type": "string" },
+        "country": { "type": "string" }
+      }
+    },
+    "Entitlement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["SLA", "warranty", "subscription"] },
+        "level": { "type": "string" },
+        "expires_at": { "type": ["string", "null"], "format": "date-time" },
+        "metadata": { "type": "object", "additionalProperties": true }
+      },
+      "required": ["id", "type"]
+    },
+    "LineItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "sku": { "type": "string" },
+        "name": { "type": "string" },
+        "quantity": { "type": "integer", "minimum": 1 },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "metadata": { "type": "object", "additionalProperties": true }
+      },
+      "required": ["sku", "quantity", "price", "currency"]
+    },
+    "Order": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "type": "string" },
+        "line_items": { "type": "array", "items": { "$ref": "#/$defs/LineItem" } },
+        "total": { "type": "number" },
+        "currency": { "type": "string" },
+        "placed_at": { "type": ["string", "null"], "format": "date-time" },
+        "fulfillment": { "type": "object", "additionalProperties": true },
+        "refunds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "amount": { "type": "number" },
+              "currency": { "type": "string" },
+              "status": { "type": "string" }
+            },
+            "required": ["id", "amount", "currency"]
+          }
+        }
+      },
+      "required": ["id", "status", "line_items", "total", "currency"]
+    },
+    "Customer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "external_ids": { "type": "array", "items": { "$ref": "#/$defs/ExternalId" } },
+        "primary_contact": { "$ref": "#/$defs/Contact" },
+        "identifiers": { "$ref": "#/$defs/IdentifierSet" },
+        "addresses": { "type": "array", "items": { "$ref": "#/$defs/Address" } },
+        "attributes": { "type": "object", "additionalProperties": true },
+        "entitlements": { "type": "array", "items": { "$ref": "#/$defs/Entitlement" } },
+        "segments": { "type": "array", "items": { "type": "string" } },
+        "last_seen_at": { "type": ["string", "null"], "format": "date-time" },
+        "created_at": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "required": ["id"]
+    },
+    "Case": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "subject": { "type": "string" },
+        "status": { "type": "string", "enum": ["new", "open", "pending", "solved", "closed"] },
+        "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"] },
+        "customer_id": { "type": "string" },
+        "assigned_queue": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "custom_fields": { "type": "object", "additionalProperties": true },
+        "created_at": { "type": ["string", "null"], "format": "date-time" },
+        "updated_at": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "required": ["id", "subject", "status", "customer_id"]
+    },
+    "Note": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "case_id": { "type": "string" },
+        "channel": { "type": "string", "enum": ["voice", "chat", "email"] },
+        "body": { "type": "string" },
+        "visibility": { "type": "string", "enum": ["internal", "external"] },
+        "author": { "type": "string", "enum": ["system", "agent", "bot"] },
+        "timestamp": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "required": ["id", "case_id", "channel", "body", "visibility", "author"]
+    }
+  }
+}
+

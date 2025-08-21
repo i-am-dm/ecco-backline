@@ -1,0 +1,10 @@
+{
+  "update_case": {
+    "priority": { "deny": ["urgent"] }
+  },
+  "escalate_case": {
+    "allowed_queues": ["tier2_us", "tier2_eu"],
+    "needs_approval_queues": ["vip"]
+  }
+}
+

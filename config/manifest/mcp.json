@@ -1,0 +1,16 @@
+{
+  "tools_manifest": "../../packages/tool-schemas/v1/tools.json",
+  "canonical_model": "../../packages/canonical-model/v1/schema.json",
+  "schemas": {
+    "tool_manifest": "../schemas/tool-manifest.schema.json",
+    "tenant": "../schemas/tenant.schema.json",
+    "vendor_mapping": "../schemas/vendor-mapping.schema.json",
+    "oauth_provider": "../schemas/oauth-provider.schema.json"
+  },
+  "latency_budgets_ms": {
+    "read_p50": 150,
+    "read_p95": 300,
+    "write_p95": 800
+  }
+}
+

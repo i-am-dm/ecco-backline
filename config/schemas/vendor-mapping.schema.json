@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actions.platform/schemas/config/vendor-mapping.schema.json",
+  "title": "Vendor Mapping Config",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "provider": { "type": "string" },
+    "mappings": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Map canonical fields (dot-notation) to vendor-specific paths or expressions."
+    },
+    "features": { "type": "object", "additionalProperties": { "type": "boolean" } }
+  },
+  "required": ["provider", "mappings"]
+}
+
